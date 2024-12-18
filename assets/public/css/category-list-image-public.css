@@ -1,0 +1,29 @@
+/**
+ * All of the CSS for your public facing functionality should be
+ * included in this file.
+ */
+
+ .bsw-event-category-grid{
+    display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-gap: 20px;
+}
+
+.bsw-event-category-grid .gt-banner-box{
+    background-position: center center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.bsw-event-category-grid .gt-banner-box .gt-content{
+   padding: 0px;
+   min-height: 150px;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   font-size: 24px;
+}
+
+.bsw-event-category-grid .gt-banner-box a::before{
+   background: linear-gradient(to bottom, rgba(0,0,0,0) 100%, #A9073A 50%,rgba(102,0,255,1) 100%);
+}
