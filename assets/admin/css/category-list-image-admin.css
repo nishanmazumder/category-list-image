@@ -3,4 +3,20 @@
  * included in this file.
  */
 
+.cli-uploader-wrapper{}
+
+.cli-uploader-wrapper img{
+    cursor: pointer;
+    max-width: 150px;
+}
+
+.cli_image_remove{
+    cursor: pointer;
+    display: inline-block;
+    background: red;
+    padding: 2px 5px;
+    color: #fff;
+    position: absolute;
+}
+
 @media only screen and (max-width: 600px) {}

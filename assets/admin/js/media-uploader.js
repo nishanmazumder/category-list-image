@@ -1,39 +1,37 @@
 jQuery(document).ready(function($){
 
-    // Instantiates the variable that holds the media library frame.
-    var meta_image_frame;
+    var cli_media_frame;
 
-    // Runs when the image button is clicked.
-    $('#upload_image_btn').click(function(e){
+    if(! $('#cli_upload_image_url').val()){
+        $('.cli_image_remove').hide();
+    }
 
-        // Prevents the default action from occuring.
-        e.preventDefault();
+    $('#cli_upload_image_btn').click(function(){
+        // e.preventDefault();
 
-        // If the frame already exists, re-open it.
-        if ( meta_image_frame ) {
-            meta_image_frame.open();
+        if ( cli_media_frame ) {
+            cli_media_frame.open();
             return;
         }
 
-        // Sets up the media library frame
-        meta_image_frame = wp.media.frames.meta_image_frame = wp.media({
+        cli_media_frame = wp.media.frames.cli_media_frame = wp.media({
             title: meta_image.title,
             button: { text:  meta_image.button },
             library: { type: 'image' }
         });
 
-        // Runs when an image is selected.
-        meta_image_frame.on('select', function(){
-
-            // Grabs the attachment selection and creates a JSON representation of the model.
-            var media_attachment = meta_image_frame.state().get('selection').first().toJSON();
-
-            // Sends the attachment URL to our custom image input field.
-            $('#txt_upload_image').val(media_attachment.url);
+        cli_media_frame.on('select', function(){
+            var media_attachment = cli_media_frame.state().get('selection').first().toJSON();
+            $('#cli_upload_image_url').val(media_attachment.url);
+            $('#cli_upload_image_btn').attr('src', media_attachment.url);
+            $('.cli_image_remove').show();
         });
 
-        // Opens the media library frame.
-        meta_image_frame.open();
+        cli_media_frame.open();
     });
+
+    $('.cli_image_remove').on('click', function(){
+        $('#cli_upload_image_btn').attr('src', meta_image.placeholder);
+    })
 
 });
