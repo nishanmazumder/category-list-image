@@ -173,7 +173,7 @@ function category_list_image_action_links( $actions, $plugin_file ) {
 	}
 
 	if ( $plugin === $plugin_file ) {
-		$dashboard    = array( 'dashboard' => '<a href="' . admin_url( 'options-general.php?page=category-list-image' ) . '">' . __( 'Dashboard', 'category-list-image' ) . '</a>' );
+		$dashboard = array( 'dashboard' => '<a href="' . admin_url( 'options-general.php?page=category-list-image' ) . '">' . __( 'Dashboard', 'category-list-image' ) . '</a>' );
 		// $doc_link     = array( 'settings' => '<a href="' . admin_url( 'options-general.php?page=category-list-image-settings' ) . '">' . __( 'Settings', 'category-list-image' ) . '</a>' );
 		// $support_link = array( 'support' => '<a href="' . admin_url( 'options-general.php?page=category-list-image-support' ) . '">' . __( 'Support', 'category-list-image' ) . '</a>' );
 
@@ -186,3 +186,81 @@ function category_list_image_action_links( $actions, $plugin_file ) {
 }
 
 add_filter( 'plugin_action_links', 'category_list_image_action_links', 10, 5 );
+
+
+
+/**
+ * admin menu without using register_setting.
+ */
+
+
+// Add the custom admin menu
+function custom_admin_menu() {
+	add_menu_page(
+		'Category List Image Settings', // Page title
+		'Category List Image',          // Menu title
+		'manage_options',               // Capability
+		'category-list-image',          // Menu slug
+		'category_list_image_page'      // Callback function
+	);
+}
+add_action( 'admin_menu', 'custom_admin_menu' );
+
+// Callback function to display settings page
+function category_list_image_page() {
+	?>
+	<div class="wrap">
+		<h1><?php esc_html_e( 'Category List Image Settings', 'plugin-text-domain' ); ?></h1>
+		<form method="post" action="">
+			<?php
+				// Display the fields
+				$category_list_image = get_option( 'category_list_image', '' );
+			?>
+			<input type="text" name="category_list_image" value="<?php echo esc_attr( $category_list_image ); ?>" />
+			<input type="submit" name="save_settings" value="<?php esc_attr_e( 'Save Settings', 'plugin-text-domain' ); ?>" />
+		</form>
+	</div>
+	<?php
+	// If settings are saved
+	if ( isset( $_POST['save_settings'] ) ) {
+		// Sanitize and save the input value manually
+		$new_value = sanitize_text_field( $_POST['category_list_image'] );
+		update_option( 'category_list_image', $new_value );
+	}
+}
+
+
+function custom_api_settings_endpoint() {
+	register_rest_route(
+		'wp/v2',
+		'/settings',
+		array(
+			'methods'             => 'POST',
+			'callback'            => 'save_custom_settings',
+			'permission_callback' => '__return_true',
+		)
+	);
+}
+add_action( 'rest_api_init', 'custom_api_settings_endpoint' );
+
+function save_custom_settings( WP_REST_Request $request ) {
+	// Get the value from the request
+	$category_list_image = sanitize_text_field( $request->get_param( 'category_list_image' ) );
+
+	// Save the setting using update_option()
+	update_option( 'category_list_image', $category_list_image );
+
+	return new WP_REST_Response( 'Settings saved successfully', 200 );
+}
+
+
+function enqueue_admin_scripts() {
+	wp_enqueue_script(
+		'category-list-image-settings',
+		plugin_dir_url( __FILE__ ) . 'build/settings-page.js',
+		array( 'wp-element', 'wp-components', 'wp-i18n', 'wp-api-fetch' ),
+		filemtime( plugin_dir_path( __FILE__ ) . 'build/settings-page.js' ),
+		true
+	);
+}
+add_action( 'admin_enqueue_scripts', 'enqueue_admin_scripts' );

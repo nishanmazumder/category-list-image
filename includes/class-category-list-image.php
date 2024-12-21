@@ -160,6 +160,10 @@ class Category_List_Image {
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_action, 'enqueue_public_resources' );
 
 		$admin_action = Category_List_Image_Admin::get_instance();
+
+		// $this->loader->add_filter( 'manage_category_columns', $admin_action, 'cli_set_columns_image', 4 );
+
+
 	}
 
 	/**
